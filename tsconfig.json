@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "useUnknownInCatchVariables": false,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2019",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "forceConsistentCasingInFileNames": false,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@app/": ["src/app"],
+      "@app/*": ["src/app/*"],
+      "@requests/": ["src/requests"],
+      "@requests/*": ["src/requests/*"],
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
