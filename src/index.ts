@@ -2,10 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { Callback, Context, Handler } from 'aws-lambda';
 import { AppModule } from '@app/app.module';
 import { AppService } from '@app/services/app.service';
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus, INestApplicationContext } from '@nestjs/common';
+
+let app: INestApplicationContext;
 
 const bootstrap = async (): Promise<void> => {
-  const app = await NestFactory.createApplicationContext(AppModule);
+  app = app || (await NestFactory.createApplicationContext(AppModule));
 
   await app.get(AppService).execute();
 };
