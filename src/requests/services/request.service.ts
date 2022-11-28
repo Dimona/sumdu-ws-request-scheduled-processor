@@ -7,8 +7,10 @@ import { EntityAttributes } from '@typedorm/common';
 import {
   EntityManagerCountOptions,
   EntityManagerFindOptions,
+  EntityManagerUpdateOptions,
 } from '@typedorm/core/cjs/src/classes/manager/entity-manager';
 import { FindResults } from '@requests/types/aws.dynamodb.types';
+import { UpdateBody } from '@typedorm/core/esm/src/classes/expression/update-body-type';
 
 @Injectable()
 export class RequestService {
@@ -34,5 +36,23 @@ export class RequestService {
     queryOptions: EntityManagerFindOptions<WeatherRequestEntity, any>;
   }): Promise<FindResults<WeatherRequestEntity>> {
     return this.awsDynamodbService.getEntityManager(REQUESTS).find(WeatherRequestEntity, partitionKey, queryOptions);
+  }
+
+  async update({
+    primaryKeyAttributes,
+    body,
+    queryOptions,
+  }: {
+    primaryKeyAttributes: Partial<WeatherRequestEntity>;
+    body: UpdateBody<Omit<WeatherRequestEntity, 'createdAt'>, Omit<WeatherRequestEntity, 'createdAt'>>;
+    queryOptions?: EntityManagerUpdateOptions<WeatherRequestEntity>;
+  }): Promise<any> {
+    return this.awsDynamodbService.getEntityManager(REQUESTS).update(
+      WeatherRequestEntity,
+      primaryKeyAttributes,
+      // @ts-ignore
+      body,
+      queryOptions,
+    );
   }
 }

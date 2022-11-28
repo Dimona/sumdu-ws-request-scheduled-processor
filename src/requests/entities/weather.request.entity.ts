@@ -36,7 +36,7 @@ export class WeatherRequestEntity extends AwsDynamodbEntity<TRequest<TWeatherPay
 
   @AutoGenerateAttribute({
     strategy: AUTO_GENERATE_ATTRIBUTE_STRATEGY.EPOCH_DATE,
-    autoUpdate: true, // this will make this attribute and any indexes referencing it auto update for any write operation
+    autoUpdate: false, // this will make this attribute and any indexes referencing it auto update for any write operation
   })
   updatedAt?: number;
 
@@ -45,6 +45,9 @@ export class WeatherRequestEntity extends AwsDynamodbEntity<TRequest<TWeatherPay
 
   @Attribute()
   payload: TWeatherPayload;
+
+  @Attribute()
+  error: any;
 
   static buildRequestId({ latitude, longitude }: { latitude: number; longitude: number }): string {
     return crypto.createHash('shake256', { outputLength: 10 }).update(`${latitude}|${longitude}`).digest('hex');

@@ -40,12 +40,24 @@ export class AppService {
 
         await Promise.all(
           requests.items.map(async request => {
-            await this.awsSqsService.send(
-              new SendMessageCommand({
-                QueueUrl: this.queues[AwsSqsQueue.WEATHER_REQUESTS],
-                MessageBody: JSON.stringify(request),
-              }),
-            );
+            try {
+              await this.awsSqsService.send(
+                new SendMessageCommand({
+                  QueueUrl: this.queues[AwsSqsQueue.WEATHER_REQUESTS],
+                  MessageBody: JSON.stringify(request),
+                }),
+              );
+              await this.requestService.update({
+                primaryKeyAttributes: { id: request.id },
+                body: { status: RequestStatus.QUEUED },
+              });
+            } catch (err) {
+              this.logger.error(err);
+              await this.requestService.update({
+                primaryKeyAttributes: { id: request.id },
+                body: { status: RequestStatus.FAILED, updatedAt: new Date().valueOf() },
+              });
+            }
           }),
         );
         ({ cursor } = requests);

@@ -6,6 +6,8 @@ export type TRequest<T extends Record<string, any>> = {
   status: RequestStatus;
   payload: T;
   createdAt: number;
+  updatedAt: number;
+  error: any;
 };
 
 export type TWeatherPayload = {

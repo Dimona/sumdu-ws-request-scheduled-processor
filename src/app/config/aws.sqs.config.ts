@@ -6,8 +6,6 @@ import { AwsSqsQueue } from '@app/enums/aws.sqs.enums';
 export const awsSqsConfig = registerAs(AWS_SQS_CONFIG, () => {
   const env = process.env.ENVIRONMENT;
 
-  console.log(process.env.WS_WEATHER_REQUESTS_QUEUE_URL, process.env.ENVIRONMENT);
-
   return <AwsSqsModuleOptions>{
     client: {
       apiVersion: process.env.AWS_SQS_API_VERSION || AWS_SQS_API_VERSION,

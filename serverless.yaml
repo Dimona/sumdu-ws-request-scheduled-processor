@@ -1,4 +1,4 @@
-service: 'sumdu-ws-request-service'
+service: 'sumdu-ws-scheduled-processor'
 
 useDotenv: true
 
@@ -24,10 +24,7 @@ provider:
             - 'dynamodb:DescribeTable'
             - 'dynamodb:Query'
             - 'dynamodb:Scan'
-            - 'dynamodb:GetItem'
-            - 'dynamodb:PutItem'
             - 'dynamodb:UpdateItem'
-            - 'dynamodb:DeleteItem'
       tags:
         app: sumdu-workshop
         env: '${self:provider.stage}'
@@ -45,12 +42,8 @@ functions:
   entrypoint:
     handler: src/index.handler
     events:
-      - http:
-          method: ANY
-          path: /
-      - http:
-          method: ANY
-          path: '{proxy+}'
+      - schedule: rate(5 minutes)
+      - schedule: cron(0 5 * * * *)
 
 custom:
   webpack:
