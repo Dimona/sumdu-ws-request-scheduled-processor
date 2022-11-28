@@ -22,6 +22,7 @@ provider:
         - Effect: Allow
           Resource:
             - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${env:WS_WEATHER_REQUESTS_DYNAMODB_TABLE}
+            - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${env:WS_WEATHER_REQUESTS_DYNAMODB_TABLE}/index/*
           Action:
             - dynamodb:DescribeTable
             - dynamodb:Query
