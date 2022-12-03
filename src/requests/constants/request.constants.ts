@@ -1,5 +1,5 @@
 export const REQUESTS = 'REQUESTS';
 
-export const statusUpdatedAtIndex = 'status-updatedAt-index';
+export const statusNextTimeIndex = 'status-nextTime-index';
 
 export const LIMIT = 200;

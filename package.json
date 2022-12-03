@@ -1,6 +1,6 @@
 {
   "name": "sumdu-ws-scheduled-processor",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "SumDU workshop request-service",
   "author": "Dmytro Ieremenko",
   "private": true,
@@ -9,6 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "co:login": "aws codeartifact login --tool npm --repository workshop --domain sumdu-ws --domain-owner 316316143441 --region eu-central-1",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -38,6 +39,7 @@
     "cache-manager": "^5.1.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "dayjs": "^1.11.6",
     "dynamo-types": "^2.10.1",
     "express": "^4.18.2",
     "reflect-metadata": "^0.1.13",

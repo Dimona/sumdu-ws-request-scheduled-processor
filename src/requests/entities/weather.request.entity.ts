@@ -9,17 +9,18 @@ import {
 } from '@typedorm/common';
 import { default as crypto } from 'crypto';
 import { AwsDynamodbEntity } from '@workshop/lib-nest-aws/dist/services/dynamodb';
-import { statusUpdatedAtIndex } from '@requests/constants/request.constants';
+import { statusNextTimeIndex } from '@requests/constants/request.constants';
 
 @Entity({
   name: 'WeatherRequest',
   primaryKey: {
     partitionKey: '{{id}}',
+    sortKey: '{{targetDate}}',
   },
   indexes: {
-    [statusUpdatedAtIndex]: {
+    [statusNextTimeIndex]: {
       partitionKey: '{{status}}',
-      sortKey: '{{updatedAt}}',
+      sortKey: '{{nextTime}}',
       type: INDEX_TYPE.GSI,
     },
   },
@@ -27,6 +28,12 @@ import { statusUpdatedAtIndex } from '@requests/constants/request.constants';
 export class WeatherRequestEntity extends AwsDynamodbEntity<TRequest<TWeatherPayload>> {
   @Attribute({ unique: true })
   id: string;
+
+  @Attribute()
+  targetDate: string;
+
+  @Attribute()
+  email: string;
 
   @AutoGenerateAttribute({
     strategy: AUTO_GENERATE_ATTRIBUTE_STRATEGY.EPOCH_DATE,
@@ -36,7 +43,7 @@ export class WeatherRequestEntity extends AwsDynamodbEntity<TRequest<TWeatherPay
 
   @AutoGenerateAttribute({
     strategy: AUTO_GENERATE_ATTRIBUTE_STRATEGY.EPOCH_DATE,
-    autoUpdate: false, // this will make this attribute and any indexes referencing it auto update for any write operation
+    autoUpdate: true, // this will make this attribute and any indexes referencing it auto update for any write operation
   })
   updatedAt?: number;
 
@@ -44,12 +51,21 @@ export class WeatherRequestEntity extends AwsDynamodbEntity<TRequest<TWeatherPay
   status: RequestStatus;
 
   @Attribute()
+  expireAt?: number;
+
+  @Attribute()
   payload: TWeatherPayload;
 
   @Attribute()
-  error: any;
+  nextTime: number;
 
-  static buildRequestId({ latitude, longitude }: { latitude: number; longitude: number }): string {
-    return crypto.createHash('shake256', { outputLength: 10 }).update(`${latitude}|${longitude}`).digest('hex');
+  @Attribute()
+  error?: any;
+
+  static buildRequestId(email: string, { latitude, longitude }: { latitude: number; longitude: number }): string {
+    return crypto
+      .createHash('shake256', { outputLength: 10 })
+      .update(`${email}|${latitude}|${longitude}`)
+      .digest('hex');
   }
 }
