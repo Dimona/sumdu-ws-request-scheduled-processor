@@ -27,8 +27,6 @@
     "paths": {
       "@app/": ["src/app"],
       "@app/*": ["src/app/*"],
-      "@requests/": ["src/requests"],
-      "@requests/*": ["src/requests/*"],
     }
   },
   "exclude": ["node_modules", "dist"]

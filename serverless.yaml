@@ -30,7 +30,8 @@ provider:
             - dynamodb:UpdateItem
         - Effect: Allow
           Resource:
-            - arn:aws:sqs:${aws:region}:${aws:accountId}:${env:WS_WEATHER_REQUESTS_QUEUE_URL}
+            - arn:aws:sqs:${aws:region}:${aws:accountId}:${env:WS_WEATHER_REQUESTS_QUEUE}
+#            - https://sqs.${aws:region}.amazonaws.com/${aws:accountId}/${env:WS_WEATHER_REQUESTS_QUEUE}
           Action:
             - sqs:SendMessage
       tags:
@@ -39,7 +40,7 @@ provider:
   environment:
     ENVIRONMENT: ${self:provider.stage}
     WS_WEATHER_REQUESTS_DYNAMODB_TABLE: ${env:WS_WEATHER_REQUESTS_DYNAMODB_TABLE}
-    WS_WEATHER_REQUESTS_QUEUE_URL: ${env:WS_WEATHER_REQUESTS_QUEUE_URL}
+    WS_WEATHER_REQUESTS_QUEUE: ${env:WS_WEATHER_REQUESTS_QUEUE}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 plugins:

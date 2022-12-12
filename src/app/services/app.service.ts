@@ -1,13 +1,11 @@
+import dayjs from 'dayjs';
 import { Injectable, Logger } from '@nestjs/common';
-import { RequestService } from '@requests/services/request.service';
-import { RequestStatus } from '@requests/enums/request.enums';
-import { LIMIT, statusNextTimeIndex } from '@requests/constants/request.constants';
 import { AwsSqsModuleOptions, AwsSqsService } from '@workshop/lib-nest-aws/dist/services/sqs';
 import { SendMessageCommand } from '@aws-sdk/client-sqs';
 import { ConfigService } from '@nestjs/config';
 import { AWS_SQS_CONFIG } from '@app/constants/aws.sqs.constatns';
 import { AwsSqsQueue } from '@app/enums/aws.sqs.enums';
-import dayjs from 'dayjs';
+import { statusNextTimeIndex, WeatherRequestService, WeatherRequestStatus } from '@workshop/lib-nest-weather-request';
 
 @Injectable()
 export class AppService {
@@ -17,7 +15,7 @@ export class AppService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly requestService: RequestService,
+    private readonly weatherRequestService: WeatherRequestService,
     private readonly awsSqsService: AwsSqsService,
   ) {
     this.queues = this.configService.get<AwsSqsModuleOptions>(AWS_SQS_CONFIG).queues;
@@ -25,18 +23,18 @@ export class AppService {
 
   async execute(): Promise<void> {
     try {
-      const total = await this.requestService.count({
-        partitionKey: { status: RequestStatus.DONE },
+      const total = await this.weatherRequestService.count({
+        partitionKey: { status: WeatherRequestStatus.DONE },
         queryOptions: { queryIndex: statusNextTimeIndex },
       });
 
-      const limit = LIMIT;
+      const limit = 200;
       let offset = 0;
       let cursor: unknown;
       while (offset < total) {
-        const requests = await this.requestService.find({
+        const requests = await this.weatherRequestService.find({
           partitionKey: {
-            status: RequestStatus.DONE,
+            status: WeatherRequestStatus.DONE,
           },
           queryOptions: {
             queryIndex: statusNextTimeIndex,
@@ -66,15 +64,15 @@ export class AppService {
                   MessageBody: JSON.stringify(request),
                 }),
               );
-              await this.requestService.update({
+              await this.weatherRequestService.update({
                 primaryKeyAttributes: { id: request.id, targetDate: request.targetDate },
-                body: { status: RequestStatus.QUEUED },
+                body: { status: WeatherRequestStatus.QUEUED },
               });
             } catch (err) {
               this.logger.error(err);
-              await this.requestService.update({
+              await this.weatherRequestService.update({
                 primaryKeyAttributes: { id: request.id, targetDate: request.targetDate },
-                body: { status: RequestStatus.FAILED, error: err.trace },
+                body: { status: WeatherRequestStatus.FAILED, error: err.trace },
               });
             }
           }),
