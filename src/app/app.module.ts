@@ -9,7 +9,6 @@ import { WeatherRequestModule } from '@workshop/lib-nest-weather-request';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    WeatherRequestModule,
     ConfigModule.forFeature(awsSqsConfig),
     AwsSqsModule.registerAsync({
       useFactory(configService: ConfigService) {
@@ -17,6 +16,7 @@ import { WeatherRequestModule } from '@workshop/lib-nest-weather-request';
       },
       inject: [ConfigService],
     }),
+    WeatherRequestModule,
   ],
   providers: [AppService],
 })

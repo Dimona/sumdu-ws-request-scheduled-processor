@@ -12,9 +12,7 @@ const bootstrap = async (): Promise<void> => {
   await app.get(AppService).execute();
 };
 
-export const handler: Handler = async () => {
-  return {
-    body: await bootstrap(),
-    statusCode: HttpStatus.OK,
-  };
-};
+export const handler: Handler = async () => ({
+  body: await bootstrap(),
+  statusCode: HttpStatus.OK,
+});

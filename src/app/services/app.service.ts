@@ -58,12 +58,12 @@ export class AppService {
         await Promise.all(
           requests.items.map(async request => {
             try {
-              await this.awsSqsService.send(
-                new SendMessageCommand({
-                  QueueUrl: this.queues[AwsSqsQueue.WEATHER_REQUESTS],
-                  MessageBody: JSON.stringify(request),
-                }),
-              );
+              // still opened issue from 2018 https://github.com/aws/aws-sdk/issues/15.
+              // Url still required and it's so inconvenient
+              await this.awsSqsService.sendMessage({
+                QueueUrl: this.queues[AwsSqsQueue.WEATHER_REQUESTS],
+                MessageBody: JSON.stringify(request),
+              });
               await this.weatherRequestService.update({
                 primaryKeyAttributes: { id: request.id, targetDate: request.targetDate },
                 body: { status: WeatherRequestStatus.QUEUED },
